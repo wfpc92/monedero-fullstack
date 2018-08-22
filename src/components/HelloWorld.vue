@@ -25,6 +25,7 @@
 import axios from 'axios'
 
 let url = 'http://localhost:5000'
+url = 'https://monedero-fullstack.herokuapp.com'
 
 export default {
   name: 'HelloWorld',
