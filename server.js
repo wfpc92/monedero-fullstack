@@ -6,6 +6,7 @@ app = express();
 app.use(serveStatic(__dirname + "/dist"));
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
+app.use(express.json());
 
 const { Pool } = require('pg');
 
@@ -45,6 +46,20 @@ app.get('/total', async (req, res) => {
   try {
     const client = await pool.connect()
     const result = await client.query('select sum(CAST (denominacion as INTEGER) * cantidad ) total from monedero');
+    res.json(result);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
+app.post('/actualizar', async (req, res) => {
+  try {
+    console.log(req.body);
+    var parametros = req.body;
+    const client = await pool.connect()
+    const result = await client.query(`UPDATE public.monedero SET cantidad=${parametros.cantidad} WHERE denominacion='${parametros.denominacion}' AND tipo='${parametros.tipo}'`);
     res.json(result);
     client.release();
   } catch (err) {
